@@ -32,39 +32,22 @@ df_shuffled = df.sample(frac=1)
 df_train = df_shuffled[:int(len(df_shuffled)* 0.8)] 
 df_test  =  df_shuffled[int(len(df_shuffled)* 0.8):] 
 
-def predict(row):
-    # TODO: implement
-    found_rows = df_train[(df_train.Sex == row.Sex) & (df_train.Survived == row.Survived) & (df_train.Age == row.Age) & (df_train.Pclass == row.Pclass)]
-    if len(found_rows) > 0:
-        randomRow = found_rows.sample(n=1)
-        return randomRow.iloc[0].Survived
-    else:
-        return random.randint(0, 1)
 
-
-def getAcc():
-    tp = 0
-    tn = 0
-    fp = 0
-    fn = 0
-
-    for index, row in df_test.iterrows():
-        predicted = predict(row)
-        actual = row["Survived"]
-
-        if actual:
-            if predicted:
-                tp += 1
-            else:
-                tn += 1
-        else:
-            if predicted:
-                fp += 1
-            else:
-                fn += 1
+def normalize_colummn(feature, column):
+    mean = feature.mean().loc[column]
+    std = feature.std().loc[column]
+    for index in range(len(feature)):
+        feature.loc[index, column] = (feature.loc[index, column]- mean) / std
 
     
-    return (tp + tn) / (tp + tn + fp +fn)
+def normalize(df):
+    new_dataFrame = df.copy()
+    normalize_colummn(new_dataFrame, "Age")
 
-print(getAcc())
-#predict(df_test[1])
+
+    return None # TODO implement
+
+df_train_norm = normalize(df_train) # TODO : implement
+df_test_norm =  None # TODO : implement
+
+df.head()
